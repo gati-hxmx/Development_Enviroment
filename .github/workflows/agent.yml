@@ -79,7 +79,9 @@ jobs:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           trigger_phrase: "@claude"
           allowed_bots: ${{ vars.CODEX_BOT_LOGIN || 'chatgpt-codex-connector' }}
-          prompt: ${{ github.event_name == 'pull_request_review' && format('PR #{0} にレビューが付きました。AGENTS.md に従い、必須の指摘があれば address スキル、なければ merge-gate スキルを使ってください。往復の回数（2回まで）を守ってください。', github.event.pull_request.number) || '' }}
+          # 「 #」は YAML ではコメントの始まりになるので、式は折りたたみの書き方（>-）で渡す。
+          prompt: >-
+            ${{ github.event_name == 'pull_request_review' && format('PR #{0} にレビューが付きました。AGENTS.md に従い、必須の指摘があれば address スキル、なければ merge-gate スキルを使ってください。往復の回数（2回まで）を守ってください。', github.event.pull_request.number) || '' }}
 
   # 作業ブランチの CI が失敗したら fix-ci。回数の上限（3回）は fix-ci スキルが守る。
   fix-ci:
