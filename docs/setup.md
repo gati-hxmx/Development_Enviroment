@@ -23,7 +23,8 @@ scripts/setup-github.sh gati-hxmx/<リポジトリ名>
 
 1. Codex のクラウド（ChatGPT の Codex 画面）で GitHub を接続し、このリポジトリを使えるようにします。
 2. Codex の設定で、このリポジトリの **自動コードレビュー** を有効にします。PR が開くと Codex がレビューします。
-3. 手元の Codex CLI は ChatGPT アカウントでログインしておきます（`codex login`）。`scripts/ai` の予備として使います。
+3. Codex のクラウドの環境（このリポジトリ用）を作っておきます。Issue に `@codex` とコメントされると、その環境で作業して PR を出します。動かない場合も、24時間後に groom が Claude に引き継ぐので作業は止まりません。
+4. 手元の Codex CLI は ChatGPT アカウントでログインしておきます（`codex login`）。`scripts/ai` の予備として使います。
 
 Codex はリポジトリの `AGENTS.md` と `.agents/skills/` を読みます。
 

@@ -53,10 +53,12 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # groom が起こした Issue（Claude の bot が付けた agent ラベル）でも始められるようにする。
+          allowed_bots: claude
           prompt: |
             Issue #${{ github.event.issue.number }} を、AGENTS.md と docs/workflow.md に従って自走で進めてください。
             triage スキルから始め、各スキルの「次に呼ぶスキル」に従って、PR の作成と別の AI へのレビュー依頼（ship）まで進めます。
-            Issue に `codex` ラベルを付けた場合は、Codex に任せる旨をコメントして終えます。
+            Issue に `codex` ラベルを付けた場合は、triage スキルのとおり Issue に `@codex` で作業を頼むコメントをして終えます（24時間たっても Codex の PR がなければ groom が Claude に引き継ぎます）。
             人に判断を仰ぐのは escalate スキルの条件に当てはまるときだけです。
 
   # コメントで @claude と呼ばれたとき、またはレビューが付いたとき。
@@ -96,6 +98,8 @@ jobs:
       - uses: anthropics/claude-code-action@v1
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # 作業ブランチへの push は Claude の bot が行うので、その CI の失敗でも動けるようにする。
+          allowed_bots: claude
           additional_permissions: |
             actions: read
           prompt: |

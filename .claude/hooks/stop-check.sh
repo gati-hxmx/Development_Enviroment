@@ -13,8 +13,8 @@ cd "$(git rev-parse --show-toplevel 2>/dev/null || pwd)" || exit 0
 branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "")
 [ -z "$branch" ] || [ "$branch" = "main" ] && exit 0
 
-# 変更がなければ確かめる必要はない。
-if git diff --quiet HEAD 2>/dev/null && [ -z "$(git log --oneline origin/main..HEAD 2>/dev/null)" ]; then
+# 変更がなければ確かめる必要はない（まだ git に追加していない新しいファイルも変更に数える）。
+if [ -z "$(git status --porcelain 2>/dev/null)" ] && [ -z "$(git log --oneline origin/main..HEAD 2>/dev/null)" ]; then
   exit 0
 fi
 

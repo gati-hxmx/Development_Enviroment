@@ -14,7 +14,7 @@
 | 依存更新、文言修正、テスト追加などの定型作業（chore） | Codex | Claude Code（review） |
 | 重要なタスクで、実装方針が割れそうなもの | 両方が別ブランチで実装 | テスト結果と差分量で比べ、良い方を採用 |
 
-triage スキルが Issue に `codex` ラベルを付けたものは Codex、それ以外は Claude Code が担当します。
+triage スキルが Issue に `codex` ラベルを付けたものは Codex、それ以外は Claude Code が担当します。Codex への依頼は、Issue への `@codex` のコメントで行います（ラベルだけでは Codex は動きません）。Codex が24時間たっても PR を出さなければ、groom が Claude に引き継ぎます。
 
 ## 2. 1つの作業は1つのブランチ、1人の担当
 
