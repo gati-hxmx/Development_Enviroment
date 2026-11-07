@@ -15,9 +15,10 @@ description: 毎週の定期実行で、失敗・手戻り・人への相談の�
    - fix-ci・address の往復回数、ロールバックの件数
    - 利用上限で止まった時間
 2. 同じ種類の失敗や手戻りが2回以上あったものを探す。
-3. 原因が「ルールやスキルに書かれていない」「書き方があいまい」なら、該当する SKILL.md か AGENTS.md の改善案を作る。
-4. 改善を PR にする。`.claude/settings.json`・workflows・CODEOWNERS・リスク基準の変更は高リスクとして扱う。
-5. 週の報告を通知する（`scripts/notify`）：数字、気づいたこと、出した改善 PR。
+3. ui-review の指摘とオーナーのデザインの選択をふり返り、同じ指摘が2回以上あれば `docs/design/` の章に決まりとして足す（オーナーの選択は [経緯](../../../docs/design/history.md) にも1行）。
+4. 原因が「ルールやスキルに書かれていない」「書き方があいまい」なら、該当する SKILL.md か AGENTS.md の改善案を作る。
+5. 改善を PR にする。`.claude/settings.json`・workflows・CODEOWNERS・リスク基準の変更は高リスクとして扱う。
+6. 週の報告を通知する（`scripts/notify`）：数字、気づいたこと、出した改善 PR。
 
 ## 次に呼ぶスキル
 

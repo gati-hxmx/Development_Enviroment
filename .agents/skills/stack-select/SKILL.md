@@ -16,10 +16,12 @@ description: 新しいアプリを始めるとき、要件から技術スタッ�
 5. `.github/workflows/release.yml` にステージング確認・段階公開・ロールバックの手順を書く。
 6. マイグレーション・認証・課金・インフラのファイルを `CODEOWNERS` に足す。
 7. `docs/stack.md` の「採用したスタック」に、選んだものと理由、確かめた日付を書く。
-8. 必要ならプロジェクト固有のスキル（業務ロジック検証・画面レビュー）を `.agents/skills/` に足し、`.claude/skills/` にリンクを張る。
+8. [配色](../../../docs/design/colors.md) の変数を CSS の `:root` に書き、共通部品のフォルダ（[部品 5](../../../docs/design/components.md#5-共通部品を使い回す)）と見本帳を用意する。[デザインのルール](../../../docs/design/README.md) の「使う人」の表を、Issue から読み取れる範囲で埋める。
+9. 必要ならプロジェクト固有のスキル（業務ロジック検証など）を `.agents/skills/` に足し、`.claude/skills/` にリンクを張る。
 
 CI・CODEOWNERS・release.yml の新規作成は高リスクなので、この PR は人の承認を受けます（初回だけ）。
 
 ## 次に呼ぶスキル
 
-- ship（雛形の PR）。マージ後、元の Issue を spec から進める。
+- ship（雛形の PR）
+- あわせて design（アプリの最初の画面と配色をオーナーに選んでもらう）。マージ後、元の Issue を spec から進める。

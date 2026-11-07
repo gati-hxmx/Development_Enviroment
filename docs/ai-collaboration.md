@@ -7,7 +7,8 @@
 | 作業 | 担当 | 確かめる側 |
 | --- | --- | --- |
 | Issue の仕分け、仕様化、実装計画 | Claude Code | Codex（spec-check・計画への意見） |
-| 複数ファイル・複数画面にまたがる実装 | Claude Code | Codex（review） |
+| 複数ファイル・複数画面にまたがる実装 | Claude Code | Codex（review、画面の変更は ui-review も） |
+| 新しい見た目の案（design） | Claude Code | オーナーが選ぶ |
 | 動作確認、PR 作成、マージ判定、リリース、障害対応 | Claude Code | 機械（CI・監視） |
 | 1か所で済む小さな修正、原因がわかっている小さな不具合 | Codex | Claude Code（review） |
 | 依存更新、文言修正、テスト追加などの定型作業（chore） | Codex | Claude Code（review） |
@@ -52,7 +53,7 @@ triage スキルが Issue に `codex` ラベルを付けたものは Codex、そ
 ## 5. レビュー
 
 - すべての PR を、作った側と別の AI がレビューします（review スキル）。
-  - Claude Code が作った PR：Codex の GitHub 自動レビュー、または PR に `@codex review` とコメント。
+  - Claude Code が作った PR：Codex の GitHub 自動レビュー、または PR に `@codex review` とコメント。画面の変更があるときは、`@codex` に ui-review スキルで画面を確かめるよう続けて頼みます。
   - Codex が作った PR：Claude Code が review スキルでレビュー。
 - 指摘への対応（address スキル）と再レビューの往復は **2回まで** です。決着しないときは、両者の主張と推奨案を PR にまとめて escalate します。
 - 手元（Mac）で Codex にレビューを頼むとき：

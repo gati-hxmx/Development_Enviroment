@@ -29,17 +29,39 @@ for skill in .agents/skills/*/; do
 done
 
 step "文書内のリンク"
-# [文字](相対パス) のリンク先が存在するか。http・#・mailto は対象外。
+# [文字](相対パス#見出し) のリンク先のファイルと見出しが存在するか。http・mailto は対象外。
 git ls-files --cached --others --exclude-standard '*.md' 2>/dev/null | python3 -c '
 import os, re, sys
+
+def slugs(path):
+    # GitHub と同じ規則で見出しのアンカーを作る
+    found, seen, fence = set(), {}, False
+    for line in open(path, encoding="utf-8"):
+        if line.startswith("```"):
+            fence = not fence
+        if fence:
+            continue
+        m = re.match(r"#{1,6}\s+(.*?)\s*#*\s*$", line)
+        if not m:
+            continue
+        base = re.sub(r"[^\w\- ]", "", m.group(1).strip().lower()).replace(" ", "-")
+        n = seen.get(base, 0)
+        seen[base] = n + 1
+        found.add(base if n == 0 else f"{base}-{n}")
+    return found
+
 bad = 0
 for md in sys.stdin.read().split():
     text = open(md, encoding="utf-8").read()
-    for target in re.findall(r"\]\(([^)#\s]+)", text):
+    for target, anchor in re.findall(r"\]\(([^)#\s]*)(?:#([^)\s]+))?\)", text):
         if re.match(r"(https?:|mailto:)", target):
             continue
-        if not os.path.exists(os.path.join(os.path.dirname(md), target)):
+        path = os.path.join(os.path.dirname(md), target) if target else md
+        if target and not os.path.exists(path):
             print(f"  ✗ {md} → {target} が見つかりません")
+            bad = 1
+        elif anchor and path.endswith(".md") and anchor not in slugs(path):
+            print(f"  ✗ {md} → {target}#{anchor} の見出しが見つかりません")
             bad = 1
 sys.exit(bad)
 ' || failed=1

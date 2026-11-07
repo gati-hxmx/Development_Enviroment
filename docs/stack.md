@@ -22,6 +22,7 @@
 | ホスティング | Vercel | PR ごとのプレビュー、段階公開、即ロールバックが標準 | Cloudflare、自前サーバー |
 | DB | Neon（Postgres） | PR ごとに DB をブランチできる | Supabase |
 | ORM | Drizzle | スキーマが TypeScript で、マイグレーションの差分が読みやすい | Prisma |
+| UI | Tailwind CSS（色・寸法は [配色](design/colors.md) の CSS 変数を使う）、アイコンは Lucide | 共通部品を作りやすく、ルールの変数をそのまま使える | CSS Modules |
 | テスト | Vitest、Playwright | 単体テストと画面操作のテストを verify が自動で回せる | ― |
 | Lint・整形 | Biome | 1つの道具で Lint と整形が済み、速い | ESLint + Prettier |
 | エラー監視 | Sentry | 異常を検知して incident と自動ロールバックの引き金にできる | ― |
@@ -37,7 +38,9 @@ stack-select スキルが次を行います。
 2. `scripts/check` に、テスト・型チェック・Lint・ビルドのコマンドを書く
 3. `.github/workflows/release.yml` に、ステージング確認と本番の段階公開・ロールバックの手順を書く
 4. 高リスクのファイル（マイグレーション・認証・課金・インフラ）を `CODEOWNERS` に足す
-5. プロジェクト固有のスキル（業務ロジックの検証、画面レビューなど）が必要なら `.agents/skills/` に足す
+5. [配色](design/colors.md) の変数を CSS の `:root` に書き、[部品 5](design/components.md#5-共通部品を使い回す) の共通部品を置くフォルダと見本帳を決める
+6. design スキルで最初の画面と配色を選んでもらい、[デザインのルール](design/README.md) の「使う人」の表を埋める
+7. プロジェクト固有のスキル（業務ロジックの検証など）が必要なら `.agents/skills/` に足す
 
 ## 4. 採用したスタック
 

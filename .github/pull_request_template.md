@@ -18,6 +18,12 @@ risk:low / risk:medium / risk:high（理由：）
 
 確かめられなかったこと：
 
+## 画面（画面・操作が変わるときだけ）
+
+- 375px / 1024px / 1440px のスクリーンショット：
+- 基本 10 の確認のしかた（docs/design/layout.md）：すべて確認済み / 未確認の項目：
+- ui-review：
+
 ## 残した課題
 
 -

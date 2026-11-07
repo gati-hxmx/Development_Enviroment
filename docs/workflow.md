@@ -10,6 +10,8 @@ flowchart LR
   triage -->|小さな定型作業| chore
   triage --> spec
   spec --> speccheck[spec-check<br/>Codex]
+  speccheck -->|新しい見た目| design
+  design -.->|オーナーが選ぶ| plan
   speccheck --> plan
   plan --> implement
   implement --> verify
@@ -20,6 +22,9 @@ flowchart LR
   address --> review
   ship -.->|CI 失敗| fixci[fix-ci]
   fixci -.-> ship
+  review -->|画面の変更| uireview[ui-review<br/>作った側と別のAI]
+  uireview -->|指摘あり| address
+  uireview -->|指摘なし| gate
   review -->|指摘なし| gate[merge-gate]
   gate -->|低・中リスク| release
   gate -->|高リスク| escalate
@@ -33,14 +38,16 @@ flowchart LR
 | スキル | いつ動くか | 実行する側 | 次に呼ぶスキル |
 | --- | --- | --- | --- |
 | triage | Issue が立った・`agent` ラベルが付いた | Claude Code | spec、chore、stack-select（新規アプリ） |
-| stack-select | 新しいアプリを始めるとき | Claude Code | spec |
+| stack-select | 新しいアプリを始めるとき | Claude Code | design（最初の見た目）→ spec |
 | spec | triage の後 | Claude Code | spec-check |
-| spec-check | spec の後 | Codex | plan（指摘は spec が反映） |
+| spec-check | spec の後 | Codex | plan（新しい見た目が要れば design。指摘は spec が反映） |
+| design | 新しい種類の画面・デザインのルールの変更・アプリの最初の見た目 | Claude Code | escalate（オーナーが選ぶ）→ plan |
 | plan | spec-check の後 | Claude Code | implement |
 | implement | plan の後 | Claude Code（`codex` ラベルは Codex） | verify |
 | verify | implement の後 | Claude Code | ship（失敗なら implement） |
 | ship | verify・chore の後 | 作った側 | review |
-| review | PR が開いた・更新された | 作った側と別の AI | address、merge-gate |
+| review | PR が開いた・更新された | 作った側と別の AI | address、ui-review（画面の変更）、merge-gate |
+| ui-review | 画面・操作が変わる PR | 作った側と別の AI | address、design、merge-gate |
 | address | 指摘が付いた | 作った側 | review（2往復まで、超えたら escalate） |
 | fix-ci | CI が失敗した | 作った側 | review（3回失敗で escalate） |
 | merge-gate | CI とレビューが通った | Claude Code | release、escalate |
