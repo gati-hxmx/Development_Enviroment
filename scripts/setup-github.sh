@@ -71,4 +71,4 @@ else
   echo "  作成しました"
 fi
 
-echo "✓ ラベル・ルールの設定が終わりました（scripts/new-app から呼んだ場合は、続けて Secret を登録します）"
+echo "✓ 完了。Secret（CLAUDE_CODE_OAUTH_TOKEN・DISCORD_WEBHOOK_URL）は docs/setup.md を見て登録してください。"
