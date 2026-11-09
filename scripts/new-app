@@ -1,0 +1,82 @@
+#!/bin/bash
+# 新しいアプリのリポジトリを、このテンプレートから作って初期設定まで一度に行う（docs/setup.md の 6）。
+# すでにあるリポジトリに対して実行すると、作成を飛ばして設定だけ行う。何度実行しても同じ結果になる。
+#
+# 使い方: scripts/new-app <owner/repo> [--private]
+# 必要なもの: gh（管理者権限でログイン済み）
+#
+# Secret（CLAUDE_CODE_OAUTH_TOKEN・DISCORD_WEBHOOK_URL）の値は、次の順で探す。
+#   1. 同じ名前の環境変数
+#   2. macOS のキーチェーン（サービス名 dev-agent-secrets、アカウント名が Secret の名前）
+#   3. どちらにもなければ入力を求め、キーチェーンに保存する（次回から聞かない）
+# 値は画面・ログ・引数に出さない（gh secret set へは標準入力で渡す）。
+
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+repo="${1:-}"
+visibility="--public"
+[ "${2:-}" = "--private" ] && visibility="--private"
+if [ -z "$repo" ] || [[ "$repo" != */* ]]; then
+  echo "使い方: scripts/new-app <owner/repo> [--private]" >&2
+  exit 2
+fi
+
+template="${TEMPLATE_REPO:-gati-hxmx/development_enviroment}"
+keychain_service="dev-agent-secrets"
+secrets=(CLAUDE_CODE_OAUTH_TOKEN DISCORD_WEBHOOK_URL)
+
+echo "▶ リポジトリ"
+if gh repo view "$repo" >/dev/null 2>&1; then
+  echo "  $repo はすでにあります。設定だけ行います"
+else
+  gh repo create "$repo" --template "$template" "$visibility" >/dev/null
+  echo "  $template から作りました"
+  # テンプレートからの複製が終わるまで待つ
+  for _ in $(seq 1 30); do
+    gh api "repos/$repo/commits?per_page=1" >/dev/null 2>&1 && break
+    sleep 2
+  done
+fi
+
+scripts/setup-github.sh "$repo"
+
+echo "▶ Secret"
+secret_value() {
+  local name="$1" value=""
+  value="${!name:-}"
+  if [ -z "$value" ] && command -v security >/dev/null; then
+    value=$(security find-generic-password -s "$keychain_service" -a "$name" -w 2>/dev/null || true)
+  fi
+  if [ -z "$value" ] && [ -t 0 ]; then
+    if command -v security >/dev/null; then
+      # 値を引数に渡すと ps で見えるので、-w を最後に置いて security 自身に入力させる
+      echo "  $name の値を入力してください（表示されません。確認でもう一度聞かれます）" >&2
+      security add-generic-password -U -s "$keychain_service" -a "$name" -w </dev/tty >&2
+      value=$(security find-generic-password -s "$keychain_service" -a "$name" -w 2>/dev/null || true)
+      [ -n "$value" ] && echo "  キーチェーンに保存しました（次回から聞きません）" >&2
+    else
+      read -r -s -p "  $name の値を入力してください（表示されません）: " value </dev/tty
+      echo >&2
+    fi
+  fi
+  printf '%s' "$value"
+}
+missing=0
+for name in "${secrets[@]}"; do
+  value=$(secret_value "$name")
+  if [ -z "$value" ]; then
+    echo "  ✗ $name の値が見つかりません（環境変数かキーチェーンに入れて、もう一度実行してください）"
+    missing=1
+    continue
+  fi
+  printf '%s' "$value" | gh secret set "$name" --repo "$repo" >/dev/null
+  echo "  $name"
+done
+
+echo
+echo "✓ GitHub 側の設定が終わりました: https://github.com/$repo"
+echo "  次の2つは、最初の1回だけ「すべてのリポジトリ」にしておけば、以後は何もしなくて済みます。"
+echo "  - Claude の GitHub App のアクセス先: https://github.com/settings/installations"
+echo "  - Codex の GitHub 連携と自動コードレビュー（ChatGPT の Codex の設定）"
+exit "$missing"
