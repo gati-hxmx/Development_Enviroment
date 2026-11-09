@@ -49,11 +49,15 @@ secret_value() {
     value=$(security find-generic-password -s "$keychain_service" -a "$name" -w 2>/dev/null || true)
   fi
   if [ -z "$value" ] && [ -t 0 ]; then
-    read -r -s -p "  $name の値を入力してください（表示されません）: " value </dev/tty
-    echo >&2
-    if [ -n "$value" ] && command -v security >/dev/null; then
-      security add-generic-password -U -s "$keychain_service" -a "$name" -w "$value"
-      echo "  キーチェーンに保存しました（次回から聞きません）" >&2
+    if command -v security >/dev/null; then
+      # 値を引数に渡すと ps で見えるので、-w を最後に置いて security 自身に入力させる
+      echo "  $name の値を入力してください（表示されません。確認でもう一度聞かれます）" >&2
+      security add-generic-password -U -s "$keychain_service" -a "$name" -w </dev/tty >&2
+      value=$(security find-generic-password -s "$keychain_service" -a "$name" -w 2>/dev/null || true)
+      [ -n "$value" ] && echo "  キーチェーンに保存しました（次回から聞きません）" >&2
+    else
+      read -r -s -p "  $name の値を入力してください（表示されません）: " value </dev/tty
+      echo >&2
     fi
   fi
   printf '%s' "$value"
