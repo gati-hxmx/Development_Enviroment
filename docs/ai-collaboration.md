@@ -54,7 +54,7 @@ triage スキルが Issue に `codex` ラベルを付けたものは Codex、そ
 
 - すべての PR を、作った側と別の AI がレビューします（review スキル）。
   - Claude Code が作った PR：Codex の GitHub 自動レビュー、または PR に `@codex review` とコメント。画面の変更があるときは、`@codex` に ui-review スキルで画面を確かめるよう続けて頼みます。
-  - Codex が作った PR：Claude Code が review スキルでレビュー。
+  - Codex が作った PR：Claude Code が review スキルでレビュー。PR が開くと `.github/workflows/claude-code-review.yml` が自動で動きます（`claude/` ブランチの PR では動きません）。
 - 指摘への対応（address スキル）と再レビューの往復は **2回まで** です。決着しないときは、両者の主張と推奨案を PR にまとめて escalate します。
 - 手元（Mac）で Codex にレビューを頼むとき：
 

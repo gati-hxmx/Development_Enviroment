@@ -12,11 +12,10 @@ on:
 
 jobs:
   claude-review:
-    # Optional: Filter by PR author
-    # if: |
-    #   github.event.pull_request.user.login == 'external-contributor' ||
-    #   github.event.pull_request.user.login == 'new-developer' ||
-    #   github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR'
+    # Claude が作った PR（claude/ ブランチ）は Codex がレビューするので、ここでは動かさない
+    # （作った側と別の AI が確かめる：docs/ai-collaboration.md の「5. レビュー」）。
+    # Codex や人が作った PR だけを Claude がレビューする。
+    if: ${{ !startsWith(github.event.pull_request.head.ref, 'claude/') }}
 
     runs-on: ubuntu-latest
     permissions:
