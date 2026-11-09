@@ -64,7 +64,8 @@ flowchart LR
 | --- | --- | --- |
 | Issue に `agent` ラベル、または `@claude` | `.github/workflows/agent.yml`（Claude Code GitHub Actions） | triage から順に |
 | triage が Issue に `codex` ラベルを付け、`@codex` とコメント | Codex のクラウドタスク（GitHub 連携）。24時間たっても PR がなければ groom が Claude に引き継ぐ | chore → ship |
-| PR が開いた・更新された | Codex の自動レビュー、`@codex review` | review |
+| PR が開いた・更新された（Claude が作った PR） | Codex の自動レビュー、`@codex review` | review |
+| PR が開いた・更新された（Codex や人が作った PR） | `.github/workflows/claude-code-review.yml`（`claude/` ブランチ以外で動く） | review |
 | CI が失敗した | `.github/workflows/agent.yml`（CI 失敗時） | fix-ci |
 | 本番のエラー増加 | エラー監視から Issue を自動作成（`incident` ラベル） | incident |
 | 毎朝 | Claude Code のルーティン、または `agent.yml` の schedule | groom、`blocked` の再開 |

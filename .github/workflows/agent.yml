@@ -61,13 +61,14 @@ jobs:
             Issue に `codex` ラベルを付けた場合は、triage スキルのとおり Issue に `@codex` で作業を頼むコメントをして終えます（24時間たっても Codex の PR がなければ groom が Claude に引き継ぎます）。
             人に判断を仰ぐのは escalate スキルの条件に当てはまるときだけです。
 
-  # コメントで @claude と呼ばれたとき、またはレビューが付いたとき。
+  # コメント・レビュー本文で @claude と呼ばれたとき、または Claude の PR にレビューが付いたとき。
   # Codex のレビュー（bot）にも反応できるよう、Codex の bot 名を許可する（リポジトリ変数 CODEX_BOT_LOGIN で変更可）。
   respond:
     if: >-
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
-      (github.event_name == 'pull_request_review' && startsWith(github.event.pull_request.head.ref, 'claude/'))
+      (github.event_name == 'pull_request_review' && startsWith(github.event.pull_request.head.ref, 'claude/')) ||
+      (github.event_name == 'pull_request_review' && contains(github.event.review.body, '@claude'))
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     steps:
@@ -81,7 +82,7 @@ jobs:
           allowed_bots: ${{ vars.CODEX_BOT_LOGIN || 'chatgpt-codex-connector' }}
           # 「 #」は YAML ではコメントの始まりになるので、式は折りたたみの書き方（>-）で渡す。
           prompt: >-
-            ${{ github.event_name == 'pull_request_review' && format('PR #{0} にレビューが付きました。AGENTS.md に従い、必須の指摘があれば address スキル、なければ merge-gate スキルを使ってください。往復の回数（2回まで）を守ってください。', github.event.pull_request.number) || '' }}
+            ${{ github.event_name == 'pull_request_review' && startsWith(github.event.pull_request.head.ref, 'claude/') && format('PR #{0} にレビューが付きました。AGENTS.md に従い、必須の指摘があれば address スキル、なければ merge-gate スキルを使ってください。往復の回数（2回まで）を守ってください。', github.event.pull_request.number) || '' }}
 
   # 作業ブランチの CI が失敗したら fix-ci。回数の上限（3回）は fix-ci スキルが守る。
   fix-ci:
