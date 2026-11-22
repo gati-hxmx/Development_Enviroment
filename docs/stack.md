@@ -38,7 +38,7 @@ stack-select スキルが次を行います。
 2. `scripts/check` に、テスト・型チェック・Lint・ビルドのコマンドを書く
 3. `.github/workflows/release.yml` に、ステージング確認と本番の段階公開・ロールバックの手順を書く
 4. 高リスクのファイル（マイグレーション・認証・課金・インフラ）を `CODEOWNERS` に足す
-5. [配色](design/colors.md) の変数を CSS の `:root` に書き、[部品 5](design/components.md#5-共通部品を使い回す) の共通部品を置くフォルダと見本帳を決める
+5. [配色](design/colors.md) の変数を CSS の `:root` に書き、[部品 5](design/components.md#5-共通部品を使い回す) の共通部品を置くフォルダと見本帳を決める。`scripts/design-lint` の `SRC`・`COLOR_HOME`（色の変数を置くファイル）をそのスタックに合わせる
 6. design スキルで最初の画面と配色を選んでもらい、[デザインのルール](design/README.md) の「使う人」の表を埋める
 7. プロジェクト固有のスキル（業務ロジックの検証など）が必要なら `.agents/skills/` に足す
 
